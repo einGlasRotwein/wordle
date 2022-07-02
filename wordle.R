@@ -6,6 +6,10 @@ library(broom.mixed)
 library(openxlsx)
 
 wordle <- read.xlsx("wordle.xlsx", 1)
+wordle$date <- convertToDate(wordle$date)
+
+start_date <- min(wordle$date)
+end_date <- max(wordle$date)
 
 # Penalty: Not solving a wordle counts as 8 tries
 wordle <- 
@@ -88,7 +92,7 @@ final_guesses %>%
   geom_violin(
     aes(x = guesser, y = guess_no, fill = guesser, colour = guesser), 
     alpha = .3, size = 1
-    ) +
+  ) +
   geom_texthline(yintercept = mean_all_jan, label = mean_all_jan, 
                  hjust = .21, color = "red1", size = 6) +
   geom_texthline(yintercept = mean_won_jan, label = mean_won_jan, 
@@ -98,7 +102,10 @@ final_guesses %>%
   geom_texthline(yintercept = mean_won_juli, label = round(mean_won_juli, 2), 
                  hjust = .81, color = "blue4", size = 6) +
   scale_y_continuous(breaks = 1:8, limits = c(1, 8), labels = c(1:6, "", "X")) +
-  labs(y = "guess number") +
+  labs(
+    y = "# of guesses", title = "Wordle guesses", 
+    subtitle = paste("data collected from", start_date, "-", end_date)
+  ) +
   theme_classic() +
   theme(legend.position = "top")
 
